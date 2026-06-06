@@ -30,6 +30,51 @@ export const MOCK_BLUEPRINT = {
 	scheduling: { type: "interval", interval: 60 }
 };
 
+export const MOCK_WRAPPED_BLUEPRINT = {
+	code: "OK",
+	response: {
+		blueprint: {
+			name: "Scenario 1",
+			metadata: {
+				instant: true,
+				designer: {
+					samples: { foo: "bar" },
+					orphans: []
+				}
+			},
+			flow: [
+				{
+					id: 1,
+					metadata: {
+						designer: { x: 100 },
+						interface: [{ name: "output", type: "number" }]
+					}
+				}
+			]
+		}
+	}
+};
+
+export const MOCK_WRAPPED_BLUEPRINT_SANITIZED = {
+	code: "OK",
+	response: {
+		blueprint: {
+			name: "Scenario 1",
+			metadata: {
+				instant: true
+			},
+			flow: [
+				{
+					id: 1,
+					metadata: {
+						designer: { x: 100 }
+					}
+				}
+			]
+		}
+	}
+};
+
 export const ERROR_RESPONSE_TEXT = "Unauthorized access";
 
 describe("fetchActiveScenarios", () => {
@@ -243,6 +288,12 @@ describe("sanitizeBlueprint", () => {
 		const result = sanitizeBlueprint(input);
 		expect(result).toEqual(expected);
 		expect(result.blueprint.metadata.designer).toBeUndefined();
+	});
+
+	test("should remove response.blueprint.metadata.designer and omit interface from metadata recursively for wrapped responses", () => {
+		const result = sanitizeBlueprint(JSON.parse(JSON.stringify(MOCK_WRAPPED_BLUEPRINT)));
+		expect(result).toEqual(MOCK_WRAPPED_BLUEPRINT_SANITIZED);
+		expect(result.response.blueprint.metadata.designer).toBeUndefined();
 	});
 });
 

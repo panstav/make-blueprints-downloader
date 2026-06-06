@@ -87,6 +87,9 @@ export function sanitizeBlueprint(blueprintData) {
 	if (blueprintData?.blueprint?.metadata?.designer) {
 		delete blueprintData.blueprint.metadata.designer;
 	}
+	if (blueprintData?.response?.blueprint?.metadata?.designer) {
+		delete blueprintData.response.blueprint.metadata.designer;
+	}
 	return omitMetadataInterface(blueprintData);
 }
 
